@@ -853,7 +853,9 @@ class CommunityManagerTaskChatAction:
         target_chat_members: set[tuple[int, int]] = set()
 
         logger.info(
-            f"Retrieved {len(wallets)} wallets and {len(sticker_owners_telegram_ids)} sticker owners from Redis."
+            f"Retrieved {len(wallets)} wallets"
+            f", {len(gift_owners_telegram_ids)} gift owners"
+            f" and {len(sticker_owners_telegram_ids)} sticker owners from Redis."
         )
 
         if wallets:
