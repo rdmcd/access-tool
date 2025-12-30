@@ -1,3 +1,5 @@
+import logging
+
 import sentry_sdk
 from fastapi import FastAPI, APIRouter, Depends
 from starlette.middleware.cors import CORSMiddleware
@@ -13,6 +15,12 @@ from api.routes.stats import stats_router
 from api.routes.system import system_router, system_non_authenticated_router
 from api.routes.user import user_router
 from api.settings import api_settings
+
+
+logging.basicConfig(
+    format="%(levelname)s\t%(asctime)s - %(message)s",
+    level=logging.INFO,
+)
 
 
 if api_settings.sentry_dns:

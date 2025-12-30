@@ -417,6 +417,7 @@ class TelegramChatManageAction(ManagedChatBaseAction, TelegramChatAction):
             )
             return self.chat
 
+        logger.info(f"Enabling chat {self.chat.id!r}")
         async_task_id: AsyncResult = sender.send_task(
             "enable-chat",
             args=(self.chat.id,),
@@ -453,6 +454,7 @@ class TelegramChatManageAction(ManagedChatBaseAction, TelegramChatAction):
             )
             return self.chat
 
+        logger.info(f"Disabling chat {self.chat.id!r}")
         async_task_id: AsyncResult = sender.send_task(
             "disable-chat",
             args=(self.chat.id,),
