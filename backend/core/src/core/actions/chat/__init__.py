@@ -301,14 +301,18 @@ class TelegramChatManageAction(ManagedChatBaseAction, TelegramChatAction):
                 status_code=HTTP_429_TOO_MANY_REQUESTS, detail="Too many requests"
             )
 
+        logger.info(
+            f"Setting control level for chat {self.chat.id} to {is_fully_managed}"
+        )
         chat = self.telegram_chat_service.set_control_level(self.chat, is_fully_managed)
         notifier = sender.send_task(
             "notify-chat-mode-changed",
             args=(self.chat.id, is_fully_managed, effective_in_days),
             queue=CELERY_SYSTEM_QUEUE_NAME,
         )
-        result = await wait_for_task(task_result=notifier)
-        if not result:
+        if not await wait_for_task(task_result=notifier):
+            # Ensure that the flag is removed to allow retrying in case of error
+            redis_service.delete(f"set_control_level_{self.chat.id}")
             raise HTTPException(
                 status_code=HTTP_502_BAD_GATEWAY,
                 detail="Something went wrong while changing the chat mode. Please, try again later.",
