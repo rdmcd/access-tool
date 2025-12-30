@@ -4,6 +4,7 @@ from sqlalchemy import text
 
 from api.pos.common import StatusFDO
 from core.actions.base import BaseAction
+from core.constants import CELERY_SYSTEM_QUEUE_NAME
 from core.services.superredis import RedisService
 
 
@@ -18,6 +19,10 @@ class SystemAction(BaseAction):
         logger.debug("Checking Redis state")
         redis_service = RedisService()
         redis_service.client.ping()
+        try:
+            redis_service.client.llen(CELERY_SYSTEM_QUEUE_NAME)
+        except Exception as e:
+            logger.error(f"Redis error: {e}", exc_info=True)
         logger.debug("Redis state OK")
         return StatusFDO(
             status="ok",

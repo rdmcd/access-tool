@@ -423,7 +423,6 @@ class TelegramChatManageAction(ManagedChatBaseAction, TelegramChatAction):
             args=(self.chat.id,),
             queue=CELERY_SYSTEM_QUEUE_NAME,
         )
-        logger.info(f"Task id {async_task_id.id}. Waiting for completion")
         if not await wait_for_task(task_result=async_task_id):
             raise HTTPException(
                 status_code=HTTP_502_BAD_GATEWAY,
@@ -461,7 +460,6 @@ class TelegramChatManageAction(ManagedChatBaseAction, TelegramChatAction):
             args=(self.chat.id,),
             queue=CELERY_SYSTEM_QUEUE_NAME,
         )
-        logger.info(f"Task id {async_task_id.id}. Waiting for completion")
         if not await wait_for_task(task_result=async_task_id):
             raise HTTPException(
                 status_code=HTTP_502_BAD_GATEWAY,
