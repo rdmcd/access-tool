@@ -74,6 +74,12 @@ def fetch_wallet_details(address: str) -> None:
             collection.address for collection in whitelisted_nfts
         ]
 
+        active_jetton_wallets = [
+            balance.wallet_address.address.to_raw()
+            for balance in jettons_balances.balances
+        ]
+        jetton_wallet_service.delete_missing(address, active_jetton_wallets)
+
     nft_items: NftItems = asyncio.run(
         get_all_nfts_per_user(
             blockchain_service=blockchain_service,
@@ -84,6 +90,9 @@ def fetch_wallet_details(address: str) -> None:
     with DBService().db_session() as db_session:
         nft_service = NftItemService(db_session)
         nft_service.bulk_create_or_update(nft_items, whitelist_collection_addresses)
+
+        active_nft_items = [item.address.to_raw() for item in nft_items.nft_items]
+        nft_service.delete_missing(address, active_nft_items)
 
     logger.info(f"NFT items for {address!r} fetched.")
     redis_service = RedisService()
