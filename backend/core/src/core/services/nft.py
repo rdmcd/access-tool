@@ -193,7 +193,6 @@ class NftItemService(BaseService):
         )
 
         # 3. Batch delete in chunks
-        # 3. Batch delete in chunks
         for chunk in batched(to_delete, DEFAULT_DB_QUERY_MAX_PARAMETERS_SIZE):
             self.db_session.query(NftItem).filter(NftItem.address.in_(chunk)).delete(
                 synchronize_session=False
