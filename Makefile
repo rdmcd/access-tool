@@ -117,7 +117,6 @@ compile_requirements: _compile_requirements_api _compile_requirements_core _comp
 	cp backend/core/requirements.txt backend/indexer_gifts/requirements.txt
 	cp backend/core/requirements.txt backend/indexer_price/requirements.txt
 	cp backend/core/requirements.txt backend/indexer_stickers/requirements.txt
-	cp backend/community_manager/requirements.txt backend/scheduler/requirements.txt
 
 
 include config/env/.core.env

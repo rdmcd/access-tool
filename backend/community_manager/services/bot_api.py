@@ -12,14 +12,22 @@ from community_manager.settings import community_manager_settings
 logger = logging.getLogger(__name__)
 
 
+_bot_instance: Bot | None = None
+
+
+def get_bot() -> Bot:
+    global _bot_instance
+    if _bot_instance is None:
+        _bot_instance = Bot(
+            token=community_manager_settings.telegram_bot_token,
+            default=DefaultBotProperties(parse_mode="MarkdownV2"),
+        )
+    return _bot_instance
+
+
 class TelegramBotApiService:
     def __init__(self) -> None:
-        self.token = community_manager_settings.telegram_bot_token
-        # Use AiohttpSession if we need specific config, but default is fine.
-        # We can implement middleware here if needed.
-        self.bot = Bot(
-            token=self.token, default=DefaultBotProperties(parse_mode="MarkdownV2")
-        )
+        self.bot = get_bot()
 
     async def _safe_request(self, func, *args, **kwargs) -> Any:
         """
@@ -35,13 +43,6 @@ class TelegramBotApiService:
         except Exception as e:
             logger.error(f"BotAPI Error: {e}", exc_info=True)
             raise e
-        finally:
-            # We should close the session if we are creating a new bot instance every time.
-            # However, for efficiency, we might want to keep the session alive.
-            # But since this runs in a Celery worker (likely prefork), managing session lifecycle is tricky.
-            # Aiogram 3.x manages session automatically with context managers, but we are using it as a service.
-            # Let's verify session closure.
-            await self.bot.session.close()
 
     async def kick_chat_member(self, chat_id: int | str, user_id: int) -> bool:
         """
