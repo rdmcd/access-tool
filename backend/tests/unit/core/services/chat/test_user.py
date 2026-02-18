@@ -1,29 +1,22 @@
 import pytest
-from core.models.chat import TelegramChatUser
-from core.models.user import User
 from core.services.chat.user import TelegramChatUserService
+from tests.factories import TelegramChatFactory, TelegramChatUserFactory, UserFactory
 
 
 @pytest.mark.asyncio
-async def test_yield_all_for_chat_batching(db_session, chat_factory):
+async def test_yield_all_for_chat_batching(db_session):
     # Setup
-    chat = chat_factory()
+    chat = TelegramChatFactory.with_session(db_session).create()
     service = TelegramChatUserService(db_session)
 
     # Create 25 users
     users = []
     for i in range(25):
-        user = User(telegram_id=1000 + i)
-        db_session.add(user)
-        db_session.flush()
-
-        chat_user = TelegramChatUser(
-            chat_id=chat.id, user_id=user.id, is_admin=False, is_managed=True
+        user = UserFactory.with_session(db_session).create(telegram_id=1000 + i)
+        chat_user = TelegramChatUserFactory.with_session(db_session).create(
+            chat=chat, user=user, is_admin=False, is_managed=True
         )
-        db_session.add(chat_user)
         users.append(chat_user)
-
-    db_session.commit()
 
     # Test
     batches = []
