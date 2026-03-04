@@ -63,7 +63,7 @@ class JettonAction(BaseAction):
             f"refresh_details_{address_raw}", "1", ex=3600, nx=True
         ):
             logger.warning(
-                f"Refresh details for {address_raw} was triggered already. Please wait for an hour to do it again."
+                f"Refresh details for {address_raw} was triggered already. Skipping."
             )
             raise HTTPException(
                 status_code=HTTP_409_CONFLICT,

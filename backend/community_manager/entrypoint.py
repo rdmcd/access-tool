@@ -70,15 +70,17 @@ def main() -> None:
     health_thread.start()
 
     telethon_service.start_sync()
+    logger.info("Telegram client catching up...")
     telethon_service.client.loop.run_until_complete(telethon_service.client.catch_up())
 
     # Start the Gateway Service as a background task on the same loop
-    telethon_service.client.loop.create_task(gateway_service.start())
+    gateway_task = telethon_service.client.loop.create_task(gateway_service.start())
 
     try:
         telethon_service.client.run_until_disconnected()
     finally:
         gateway_service.stop()
+        telethon_service.client.loop.run_until_complete(gateway_task)
 
 
 if __name__ == "__main__":

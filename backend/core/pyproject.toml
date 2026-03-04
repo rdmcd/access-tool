@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "core"
-version = "1.0.0"
+version = "1.0.1"
 description = "Access Community Tool – Core package"
 authors = [
     { name="danoctua", email="danoctua@gmail.com" }
