@@ -22,9 +22,7 @@ async def get_chat_nft_collection_rule(
         requestor=request.state.user,
         chat_slug=slug,
     )
-    return NftEligibilityRuleFDO.model_validate(
-        action.read(rule_id=rule_id).model_dump()
-    )
+    return NftEligibilityRuleFDO.model_validate(action.read(rule_id=rule_id).model_dump())
 
 
 @manage_nft_collection_rules_router.post("")
@@ -85,4 +83,4 @@ async def delete_chat_nft_collection_rule(
         requestor=request.state.user,
         chat_slug=slug,
     )
-    await action.delete(rule_id=rule_id)
+    action.delete(rule_id=rule_id)
